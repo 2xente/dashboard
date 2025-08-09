@@ -1,16 +1,4 @@
-from fastapi import FastAPI
 import streamlit as st
-
-
-app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"message": "Bienvenue sur mon API FastAPI 🚀"}
-
-@app.get("/hello/{name}")
-def greet(name: str):
-    return {"message": f"Hello {name} 👋"}
 
 # Titre de l'application
 st.title("Dashboard explication risque crédit")

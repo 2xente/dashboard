@@ -6,7 +6,7 @@ def load_data():
     Load the dataset from a CSV file and return it as a pandas DataFrame.
     """
     try:
-        df_test = pd.read_csv('application_test.csv')
+        df_test = pd.read_csv('https://bixente.s3.eu-north-1.amazonaws.com/data_test_with_index.csv')
         return df_test
     
 def select_info(df, column_name):
