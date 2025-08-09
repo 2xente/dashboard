@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # Titre de l'application
 st.title("Dashboard explication risque crédit")
@@ -7,8 +8,9 @@ st.title("Dashboard explication risque crédit")
 SK_ID_CURR = st.text_input("Entrez l'identifiant client")
 
 # Bouton
-if st.button("Dire bonjour"):
-    if SK_ID_CURR:
-        st.success(f"Bonjour, {SK_ID_CURR} 👋")
-    else:
-        st.warning("Veuillez entrer un nom avant de cliquer.")
+if st.button("Charger les données"):
+    try:
+        df=pd.read_csv("https://projetbix.s3.eu-west-3.amazonaws.com/data_test_with_index.csv")
+        st.write(df.head())  
+    except Exception as e:
+        st.error(f"Erreur lors du chargement des données : {e}") 

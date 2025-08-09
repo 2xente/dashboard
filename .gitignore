@@ -1,3 +1,18 @@
-.venv/
+# Environnement Python
+.venv
+venv/
 __pycache__/
-data_test_with_index.csv
+*.pyc
+
+# AWS CLI install
+aws/
+awscliv2.zip
+
+# Fichiers temporaires
+*.log
+*.tmp
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
