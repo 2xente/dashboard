@@ -3,11 +3,22 @@
 Activer l'environnement virtuel:
 source venv/bin/activate
 
-Lancement backend:
+Lancement backend sur http://127.0.0.1:8000
+```
 uvicorn backend.main:app --reload --port 8000
-http://127.0.0.1:8000
+```
 
-lancement front:
+lancement front sur http://localhost:8501
+```
 streamlit run frontend/app.py
-http://localhost:8501
+```
+
+# Set up 
+
+Configurer aws avec la commande suivante et les clés d'accées pour accéder au csv dans S3
+
+```
+aws configure
+```
+
 
