@@ -16,8 +16,8 @@ def load_data():
     """
     try:
         df_test = pd.read_csv('s3://bixentep7/data_test_app.csv')
-        data = day_birth_transformation(df_test)
-        return data 
+        #data = day_birth_transformation(df_test)
+        return df_test 
     except Exception as e:
         raise RuntimeError(f"Error loading data: {e}")
     
@@ -34,13 +34,13 @@ def select_info(df, column_name):
     else:
         raise ValueError(f"Column '{column_name}' does not exist in the DataFrame.")
 
-def preprocess_data(df):
-    le = LabelEncoder()
-    for col in df.select_dtypes(include=['object']).columns:
-        le.fit(df[col].astype(str))
-        df[col] = le.transform(df[col].astype(str))
-    imputer = SimpleImputer(strategy='median')
-    df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
-    scaler = MinMaxScaler()
-    df_scaled = pd.DataFrame(scaler.fit_transform(df_imputed), columns=df.columns)
-    return df_scaled
+#def preprocess_data(df):
+#    le = LabelEncoder()
+#    for col in df.select_dtypes(include=['object']).columns:
+#        le.fit(df[col].astype(str))
+#        df[col] = le.transform(df[col].astype(str))
+#    imputer = SimpleImputer(strategy='median')
+#    df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+#    scaler = MinMaxScaler()
+#    df_scaled = pd.DataFrame(scaler.fit_transform(df_imputed), columns=df.columns)
+#    return df_scaled
