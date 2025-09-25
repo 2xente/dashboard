@@ -5,7 +5,15 @@ import plotly.express as px
 import plotly.graph_objects as go
 import math
 from datetime import datetime
+import os
 
+# URL de l’API : prend la variable d’env (Azure), sinon fallback local
+API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
+
+def api_get(path: str, **kwargs):
+    """Petit wrapper GET. Utilisation: api_get('/endpoint', params={...})"""
+    timeout = kwargs.pop("timeout", 20)
+    return requests.get(f"{API_URL}{path}", timeout=timeout, **kwargs)
 
 st.set_page_config(page_title="CréditScope — prédiction de crédit",
     page_icon="💳",
@@ -16,10 +24,9 @@ st.caption("Prédiction d’éligibilité & explications locales")
 
 @st.cache_data(show_spinner=False, ttl=60)
 def fetch_global_importance(method: str = "model", k: int = 20, grouped: bool = True, shap_sample: int = 1000):
-    r = requests.get(
-        "http://localhost:8000/global_importance",
-        params={"method": method, "k": k, "grouped": grouped, "shap_sample": shap_sample},
-        timeout=20,
+    r = api_get(
+    "/global_importance",
+    params={"method": method, "k": k, "grouped": grouped, "shap_sample": shap_sample}
     )
     r.raise_for_status()
     return r.json()
@@ -89,7 +96,7 @@ with left:
         else:
             with st.spinner("Calcul en cours…"):
                 try:
-                    r = requests.get(f"http://localhost:8000/prediction", params={"sk_id_curr": int(SK_ID_CURR)}, timeout=10)
+                    r = api_get("/prediction", params={"sk_id_curr": int(SK_ID_CURR)}, timeout=10)
                     if r.status_code == 404:
                         st.error("Client introuvable.")
                     else:
@@ -151,8 +158,14 @@ with left:
 #        st.error(f"Erreur lors du chargement des données : {e}") 
 
 ## Columns information
-    columns_names_response = requests.get("http://localhost:8000/columns_names")
-    columns_names = columns_names_response.json()["columns_names"]
+    try:
+        columns_names = api_get("/columns_names").json()["columns_names"]
+    except Exception as e:
+        st.error(f"Erreur API (columns_names) : {e}")
+        columns_names = []
+
+    #columns_names_response = requests.get("http://localhost:8000/columns_names")
+    #columns_names = columns_names_response.json()["columns_names"]
 
     #col1, col2 = st.columns([3, 1])
     choix = st.selectbox("Choisissez une colonne", columns_names, index=0)
@@ -174,8 +187,11 @@ with left:
         })
 
     if choix:
-        description_response = requests.get("http://localhost:8000/columns_description", params={"column_name": choix})
+        description_response = api_get("/columns_description", params={"column_name": choix})
         description = description_response.json().get("columns_description", "Description non disponible")
+
+        #description_response = requests.get("http://localhost:8000/columns_description", params={"column_name": choix})
+        #description = description_response.json().get("columns_description", "Description non disponible")
     else :
         description = "Aucune colonne sélectionnée."
 
@@ -183,7 +199,10 @@ with left:
 
     if lancer:
         try:
-            specific_info_response = requests.get("http://localhost:8000/customer_specific_info", params={"sk_id_curr": SK_ID_CURR, "column_name": choix})
+            specific_info_response = api_get("/customer_specific_info",
+                                 params={"sk_id_curr": SK_ID_CURR, "column_name": choix})
+
+            #specific_info_response = requests.get("http://localhost:8000/customer_specific_info", params={"sk_id_curr": SK_ID_CURR, "column_name": choix})
             specific_info = specific_info_response.json()
             customer_value = specific_info.get("customer_value", "Valeur non disponible")
             all_customers_values = specific_info.get("all_customers_values", "Valeur non disponible")
