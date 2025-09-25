@@ -1,0 +1,51 @@
+name: Deploy backend (FastAPI) to Azure Web App - backendP7
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "backend/**" ]   # déclenche seulement si backend/ change
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # (Optionnel) Si tu as des tests à lancer, fais-les ici.
+      # Ex: python -m pip install -r backend/requirements.txt && pytest
+
+      - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-app
+          path: backend   # << on n'embarque QUE le dossier backend/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: python-app
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A4AE3079086D4C7C80FC478D0BEAE774 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A3B95791B89648B1B3D183C0DBBDDCBC }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9F66E88A6CC84099B441137E70A41B7A }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: backendP7      # ton App Service backend
+          slot-name: Production
+          package: backend         # << déploie le contenu de backend/ uniquement
+      
