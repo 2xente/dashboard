@@ -7,6 +7,6 @@ numpy
 scikit-learn
 python-multipart
 streamlit
-shapfsspec==2024.6.1
-s3fs==2024.6.0
-pyarrow==16.1.0
+shapfsspec
+s3fs
+pyarrow
