@@ -16,6 +16,9 @@ s3 = boto3.client(
 )
 bucket = os.getenv("S3_BUCKET")
 
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+
+
 
 # URL de l’API : prend la variable d’env (Azure), sinon fallback local
 API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
