@@ -10,16 +10,7 @@ def day_birth_transformation(df):
     return df
 
 
-def load_data():
-    """
-    Load the dataset from a CSV file and return it as a pandas DataFrame.
-    """
-    try:
-        df_test = pd.read_csv('s3://bixentep7/data_test_app.csv')
-        #data = day_birth_transformation(df_test)
-        return df_test 
-    except Exception as e:
-        raise RuntimeError(f"Error loading data: {e}")
+
     
 def select_info(df, column_name):
     """
