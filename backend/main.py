@@ -2,12 +2,13 @@ from fastapi import FastAPI, HTTPException
 import numpy as np
 import logging
 import pandas as pd
-from backend import methode 
+#from backend import methode 
 from pandas.api.types import is_numeric_dtype
 import shap
 from typing import List
 from sklearn.pipeline import Pipeline
 import math
+import os
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "")
 
@@ -48,10 +49,20 @@ def json_safe(obj):
 logger = logging.getLogger("api")
 logger.setLevel(logging.INFO)
 
+def load_data():
+    """
+    Load the dataset from a CSV file and return it as a pandas DataFrame.
+    """
+    try:
+        df_test = pd.read_csv('s3://bixentep7/data_test_app.csv')
+        #data = day_birth_transformation(df_test)
+        return df_test 
+    except Exception as e:
+        raise RuntimeError(f"Error loading data: {e}")
 
 ## Charger les données de test 
 #df=pd.read_csv("s3://bixentep7/data_test_with_index.csv")
-df= methode.load_data()
+df= load_data()
 print(df.head())
 
 ## Charger les données de test 
